@@ -2,67 +2,72 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>企業說明會｜報名查詢與 QR 補寄</title>
+<title>115 秋季企業說明會｜報名查詢與 QR 補寄</title>
 <style>
-:root{--a:#bd633b;--ad:#914526;--bg:#f7f2ed;--card:#fff;--ink:#302925;--muted:#766c65;--line:#e5d8cf;--ok:#256044;--bad:#8b3535;--soft:#f5e5dc}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#fbf8f5,#f4eee9);font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;color:var(--ink);line-height:1.65}
-main{width:min(720px,calc(100% - 22px));margin:auto;padding:24px 0 60px}.hero,.card{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:0 10px 28px rgba(60,40,28,.08)}
-.hero{padding:30px;background:linear-gradient(135deg,#fffaf6,#f1d8c9)}.tag{font-weight:900;color:var(--ad);font-size:.88rem}.hero h1{margin:6px 0 8px;font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}.hero p{margin:0;color:var(--muted)}
-.card{padding:22px;margin-top:18px}label{display:block;font-weight:900;font-size:.9rem;margin:13px 0 5px}
-input{width:100%;min-height:47px;border:1px solid #d5c8be;border-radius:11px;padding:10px 11px;font:inherit}
-button{width:100%;min-height:50px;margin-top:16px;border:0;border-radius:12px;background:linear-gradient(135deg,var(--a),var(--ad));color:#fff;font:inherit;font-weight:900;cursor:pointer}button:disabled{opacity:.55}
-.secondary{background:#4e4844}.status{display:none;margin-top:14px;padding:13px;border-radius:11px;white-space:pre-line}.ok{display:block;background:#e7f3ec;color:var(--ok)}.err{display:block;background:#fae9e9;color:var(--bad)}
-#result{display:none}.student{padding:14px;border-radius:13px;background:#f8f3ef;margin-bottom:15px}.student b{font-size:1.1rem}
-.session{padding:14px 0;border-bottom:1px dashed var(--line)}.session:last-child{border-bottom:0}.company{font-weight:900}.meta{color:var(--muted);font-size:.9rem}.badge{display:inline-block;margin-top:6px;padding:4px 8px;border-radius:999px;background:var(--soft);color:var(--ad);font-size:.78rem;font-weight:900}
-.note{margin-top:14px;padding:12px;background:#fff7ef;border-radius:11px;color:#66584f;font-size:.88rem}
+:root{--black:#0b0b0d;--ink:#171717;--muted:#5f6470;--blue:#123cff;--green:#06c763;--pink:#f2a3ea;--line:#e8e8f2}
+*{box-sizing:border-box}body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei",Arial,sans-serif;color:var(--ink);line-height:1.7;background:radial-gradient(circle at 10% 15%,rgba(6,199,99,.11),transparent 24%),radial-gradient(circle at 90% 18%,rgba(242,163,234,.18),transparent 28%),#f9f9fc}
+.wrap{width:min(900px,calc(100% - 24px));margin:auto;padding:22px 0 50px}
+.hero img{width:100%;display:block;border:3px solid #111;border-radius:25px;box-shadow:8px 8px 0 #111}
+.back{display:inline-block;margin:24px 0 14px;text-decoration:none;background:#fff;border:2px solid #111;border-radius:999px;padding:7px 13px;font-weight:900;box-shadow:4px 4px 0 #111}
+.title{margin:18px 0 20px}.title small{font-weight:900;color:var(--green);letter-spacing:.12em}.title h1{margin:5px 0;font-size:clamp(30px,6vw,48px);line-height:1.08}.title p{margin:0;color:var(--muted)}
+.card{background:#fff;border:3px solid #111;border-radius:25px;padding:24px;box-shadow:8px 8px 0 #111;margin-bottom:22px}
+.query-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:22px}.aside{background:#111;color:#fff;border-radius:18px;padding:21px;position:relative;overflow:hidden}.aside:after{content:"?";position:absolute;right:-6px;bottom:-62px;font:190px Impact;color:rgba(242,163,234,.20)}.aside h2{color:var(--pink);margin:0 0 8px}.aside p{position:relative;z-index:1;color:#ddd;font-size:14px}
+label{display:block;font-weight:900;margin:10px 0 5px}input{width:100%;min-height:48px;border:2px solid #111;border-radius:12px;padding:10px 12px;font:inherit}input:focus{outline:none;box-shadow:4px 4px 0 var(--pink)}
+button{width:100%;min-height:50px;margin-top:15px;border:3px solid #111;border-radius:14px;background:var(--green);color:#fff;font:inherit;font-weight:950;box-shadow:5px 5px 0 #111;cursor:pointer}button.secondary{background:var(--blue)}button:disabled{opacity:.55}
+.status{display:none;margin-top:14px;padding:13px;border:2px solid #111;border-radius:12px;white-space:pre-line}.ok{display:block;background:#e9fff3}.err{display:block;background:#fff0f0;color:#8a3535}
+#result{display:none}.student{background:#f8f8fc;border:1px solid var(--line);border-radius:15px;padding:15px;margin-bottom:15px}.session{padding:13px 0;border-bottom:1px dashed #ddd}.session:last-child{border-bottom:0}.company{font-weight:950;font-size:17px}.meta{color:var(--muted);font-size:13px}.badge{display:inline-block;margin-top:5px;background:#eef1ff;color:var(--blue);font-size:11px;font-weight:900;padding:4px 8px;border-radius:999px}
+.note{margin-top:15px;background:#111;color:#ddd;border-radius:14px;padding:13px;font-size:13px}.footer{text-align:center;color:#777;font-size:12px;margin-top:30px}
+@media(max-width:720px){.query-grid{grid-template-columns:1fr}.card{padding:15px;box-shadow:5px 5px 0 #111}}
 </style>
 </head>
-<body><main>
-<section class="hero"><div class="tag">NTUT CAREER · 企業說明會</div><h1>報名查詢與 QR 補寄</h1><p>輸入報名時使用的學號與 Email，可查詢目前已報名場次；若找不到個人 QR Code，可重新寄送至原 Email。</p></section>
-<section class="card">
+<body><main class="wrap">
+<section class="hero"><img src="https://rnd.ntut.edu.tw/var/file/42/1042/img/203264872.png" alt="115秋季校園徵才系列活動主視覺"></section>
+<a class="back" href="index.html">← 返回學生報名</a>
+<section class="title"><small>MY REGISTRATION</small><h1>報名查詢與 QR 補寄</h1><p>使用報名時的學號與 Email 查詢已報名企業場次。若個人 QR Code 遺失，可由此重新寄送。</p></section>
+
+<section class="card query-grid">
+<aside class="aside"><h2>查詢說明</h2><p>系統會比對學生主檔中的學號與 Email。QR 補寄只會寄回原本的個人 QR，不會建立新 Token，也不會新增任何報名紀錄。</p></aside>
+<div>
 <label>學號</label><input id="studentId" placeholder="請輸入學號">
 <label>Email</label><input id="email" type="email" placeholder="請輸入報名時使用的 Email">
 <button id="queryBtn">查詢我的報名</button>
 <div id="status" class="status"></div>
+</div>
 </section>
 
 <section id="result" class="card">
 <div id="student" class="student"></div>
-<h2 style="margin:0 0 5px">已報名場次</h2>
+<h2 style="margin:0 0 5px">目前有效報名場次</h2>
 <div id="sessions"></div>
-<div class="note">重新寄送只會寄出你原本的個人 QR Code，不會產生新的 QR，也不會新增任何報名紀錄。</div>
+<div class="note">重新寄送 QR Code 有頻率限制。若剛剛已申請補寄，請稍候再試。</div>
 <button id="resendBtn" class="secondary">重新寄送我的 QR Code</button>
 <div id="resendStatus" class="status"></div>
 </section>
+
+<div class="footer">國立臺北科技大學 研究發展處 就業輔導組｜115 秋季校園徵才系列活動</div>
 </main>
 <script>
 const GAS_URL="https://script.google.com/macros/s/AKfycbyrk9C7Cul4fUIKwFhZd8fJ5xsp-JdmebLICIaAPuNBqNoxmjYLS0lfdhxYoRU8p6zqRw/exec";
-const $=id=>document.getElementById(id);
-const esc=s=>String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+const $=id=>document.getElementById(id),esc=s=>String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
 let verified=null;
-function show(id,c,m){$(id).className=`status ${c}`;$(id).textContent=m}
+function show(id,c,m){$ (id).className=`status ${c}`;$ (id).textContent=m}
 $("queryBtn").onclick=async()=>{
- const studentId=$("studentId").value.trim(),email=$("email").value.trim();
- $("result").style.display="none";verified=null;
+ const studentId=$("studentId").value.trim(),email=$("email").value.trim();$("result").style.display="none";verified=null;
  if(!studentId||!email){show("status","err","請輸入學號與 Email。");return}
  const b=$("queryBtn");b.disabled=true;b.textContent="查詢中…";
  try{
-  const r=await fetch(`${GAS_URL}?action=query&studentId=${encodeURIComponent(studentId)}&email=${encodeURIComponent(email)}&t=${Date.now()}`);
-  const d=await r.json();if(!d.ok)throw new Error(d.message||"查詢失敗");
-  verified={studentId,email};
-  $("status").className="status";
-  $("student").innerHTML=`<b>${esc(d.name)}</b><br><span style="color:#766c65">${esc(d.studentId)}｜${esc(d.department||"")}</span>`;
+  const r=await fetch(`${GAS_URL}?action=query&studentId=${encodeURIComponent(studentId)}&email=${encodeURIComponent(email)}&t=${Date.now()}`),d=await r.json();
+  if(!d.ok)throw new Error(d.message||"查詢失敗");verified={studentId,email};$("status").className="status";
+  $("student").innerHTML=`<b style="font-size:18px">${esc(d.name)}</b><br><span style="color:#666">${esc(d.studentId)}｜${esc(d.department||"")}</span>`;
   $("sessions").innerHTML=d.sessions.length?d.sessions.map(s=>`<div class="session"><div class="company">${esc(s.company)}</div><div class="meta">${esc(s.date)}${s.weekday?`（${esc(s.weekday)}）`:""} ${esc(s.time)}<br>${esc(s.venue||"")}</div><span class="badge">${esc(s.status)}</span></div>`).join(""):'<div class="meta">目前沒有有效報名場次。</div>';
-  $("result").style.display="block";
+  $("result").style.display="block";$("result").scrollIntoView({behavior:"smooth",block:"start"});
  }catch(e){show("status","err",e.message)}finally{b.disabled=false;b.textContent="查詢我的報名"}
 };
 $("resendBtn").onclick=async()=>{
- if(!verified)return;
- const b=$("resendBtn");b.disabled=true;b.textContent="寄送中…";
+ if(!verified)return;const b=$("resendBtn");b.disabled=true;b.textContent="寄送中…";
  try{
   const r=await fetch(GAS_URL,{method:"POST",body:JSON.stringify({action:"resendQr",...verified})}),d=await r.json();
-  if(!d.ok)throw new Error(d.message||"補寄失敗");
-  show("resendStatus","ok",`個人 QR Code 已重新寄送至 ${d.maskedEmail}。\n請稍後查看收件匣與垃圾郵件。`);
+  if(!d.ok)throw new Error(d.message||"補寄失敗");show("resendStatus","ok",`個人 QR Code 已重新寄送至 ${d.maskedEmail}。\n請查看收件匣與垃圾郵件。`);
  }catch(e){show("resendStatus","err",e.message)}finally{b.disabled=false;b.textContent="重新寄送我的 QR Code"}
 };
 </script></body></html>
