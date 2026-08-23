@@ -32,7 +32,73 @@ button:disabled{opacity:.55}.status{display:none;margin-top:14px;padding:13px;bo
 <div class="grid">
 <div><label class="field">學號</label><input id="studentId"></div>
 <div><label class="field">姓名</label><input id="name"></div>
-<div><label class="field">系所</label><input id="department"></div>
+<div>
+<label class="field">系所</label>
+<select id="department">
+<option value="">請選擇系所</option>
+
+<optgroup label="機電學院">
+<option>機電科技博士班</option>
+<option>製造科技研究所</option>
+<option>自動化科技研究所</option>
+<option>機械工程系</option>
+<option>車輛工程系</option>
+<option>能源與冷凍空調工程系</option>
+<option>五年制專科部智慧自動化工程科</option>
+</optgroup>
+
+<optgroup label="電資學院">
+<option>電機工程系</option>
+<option>電子工程系</option>
+<option>光電工程系</option>
+<option>資訊工程系</option>
+<option>太空系統工程研究所</option>
+</optgroup>
+
+<optgroup label="工程學院">
+<option>土木工程系</option>
+<option>分子科學與工程系</option>
+<option>環境工程與管理研究所</option>
+<option>資源工程研究所</option>
+<option>材料科學與工程研究所</option>
+<option>化學工程與生物科技系</option>
+<option>材料及資源工程系</option>
+</optgroup>
+
+<optgroup label="管理學院">
+<option>管理學院管理博士班</option>
+<option>資訊與財金管理系</option>
+<option>工業工程與管理系</option>
+<option>經營管理系</option>
+</optgroup>
+
+<optgroup label="設計學院">
+<option>設計學院設計博士班</option>
+<option>建築系</option>
+<option>工業設計系</option>
+<option>互動設計系</option>
+</optgroup>
+
+<optgroup label="人文與社會科學學院">
+<option>技術及職業教育研究所</option>
+<option>智慧財產權研究所</option>
+<option>應用英文系</option>
+<option>文化事業發展系</option>
+</optgroup>
+
+<optgroup label="創新前瞻科技研究學院">
+<option>人工智慧科技碩、博士學位學程</option>
+<option>資訊安全碩、博士學位學程</option>
+<option>半導體科技碩士學位學程</option>
+</optgroup>
+
+<option value="其他">其他（自行填寫）</option>
+</select>
+
+<div id="otherDepartmentWrap" style="display:none;margin-top:8px">
+<input id="otherDepartment" placeholder="請輸入你的系所／學位學程名稱">
+</div>
+</div>
 <div><label class="field">年級</label><select id="grade"><option value="">請選擇</option><option>大一</option><option>大二</option><option>大三</option><option>大四</option><option>碩一</option><option>碩二</option><option>其他</option></select></div>
 <div class="full"><label class="field">Email</label><input id="email" type="email"></div>
 </div>
@@ -51,6 +117,19 @@ const GAS_URL="https://script.google.com/macros/s/AKfycbyrk9C7Cul4fUIKwFhZd8fJ5x
 let sessions=[],selected=new Set();
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+
+function getDepartmentValue(){
+ const selected=$("department").value;
+ if(selected==="其他") return $("otherDepartment").value.trim();
+ return selected;
+}
+
+$("department").addEventListener("change",()=>{
+ const isOther=$("department").value==="其他";
+ $("otherDepartmentWrap").style.display=isOther?"block":"none";
+ if(!isOther)$("otherDepartment").value="";
+});
+
 function renderSummary(){$("summary").innerHTML=`已選擇 <b>${selected.size}</b> 場`}
 function render(){
  const groups={};sessions.forEach(s=>{const k=`${s.date}__${s.weekday||""}`;(groups[k]??=[]).push(s)});
@@ -80,8 +159,15 @@ async function load(){
 }
 function show(c,m){$("status").className=`status ${c}`;$("status").textContent=m}
 $("submit").onclick=async()=>{
- const data={studentId:$("studentId").value.trim(),name:$("name").value.trim(),department:$("department").value.trim(),grade:$("grade").value,email:$("email").value.trim(),sessionIds:[...selected]};
- if(!data.studentId||!data.name||!data.department||!data.grade||!data.email){show("err","請把學生資料填完整。");return}
+ const data={studentId:$("studentId").value.trim(),name:$("name").value.trim(),department:getDepartmentValue(),grade:$("grade").value,email:$("email").value.trim(),sessionIds:[...selected]};
+ if(!data.studentId||!data.name||!data.department||!data.grade||!data.email){
+  if($("department").value==="其他"&&!$("otherDepartment").value.trim()){
+    show("err","你選擇了「其他」，請填寫系所名稱。");
+  }else{
+    show("err","請把學生資料填完整。");
+  }
+  return
+ }
  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)){show("err","Email 格式不正確。");return}
  if(!data.sessionIds.length){show("err","請至少選擇一個場次。");return}
  const b=$("submit");b.disabled=true;b.textContent="送出中…";
