@@ -2,70 +2,95 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>企業說明會｜學生報名測試版</title>
+<title>企業說明會｜學生報名</title>
 <style>
-:root{--a:#bd633b;--ad:#914526;--bg:#f7f2ed;--card:#fff;--ink:#302925;--muted:#766c65;--line:#e5d8cf;--ok:#256044;--bad:#8b3535}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;color:var(--ink);line-height:1.6}
-main{width:min(920px,calc(100% - 22px));margin:auto;padding:22px 0 50px}.hero,.card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:0 10px 28px rgba(60,40,28,.08)}
-.hero{padding:28px;background:linear-gradient(135deg,#fffaf6,#f1d8c9)}.hero h1{margin:4px 0 8px;font-size:clamp(1.8rem,5vw,2.8rem)}.hero p{margin:0;color:var(--muted)}
+:root{--a:#bd633b;--ad:#914526;--bg:#f7f2ed;--card:#fff;--ink:#302925;--muted:#766c65;--line:#e5d8cf;--ok:#256044;--bad:#8b3535;--soft:#f4e2d7}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#fbf8f5,#f4eee9);font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;color:var(--ink);line-height:1.6}
+main{width:min(1040px,calc(100% - 22px));margin:auto;padding:22px 0 60px}.hero,.card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:0 10px 28px rgba(60,40,28,.08)}
+.hero{padding:32px;background:linear-gradient(135deg,#fffaf6,#f1d8c9)}.tag{font-weight:900;color:var(--ad);font-size:.9rem}.hero h1{margin:6px 0 8px;font-size:clamp(2rem,5vw,3rem);line-height:1.15}.hero p{margin:0;color:var(--muted)}
 .card{padding:22px;margin-top:18px}h2{margin:0 0 5px}.desc{margin:0 0 16px;color:var(--muted);font-size:.92rem}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.full{grid-column:1/-1}label{display:block;font-weight:800;font-size:.9rem;margin-bottom:5px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.full{grid-column:1/-1}label.field{display:block;font-weight:800;font-size:.9rem;margin-bottom:5px}
 input,select{width:100%;min-height:46px;border:1px solid #d5c8be;border-radius:11px;padding:10px 11px;font:inherit;background:#fff}
-.sessions{display:grid;gap:10px}.session{display:grid;grid-template-columns:24px 1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:13px;padding:13px;background:#fff}
-.session input{width:18px;height:18px;min-height:auto;accent-color:var(--a)}.company{font-weight:900}.meta{font-size:.86rem;color:var(--muted)}.seat{font-size:.8rem;font-weight:800;background:#f2dfd3;color:var(--ad);border-radius:999px;padding:5px 9px}
+.date-block{margin-top:20px}.date-head{font-size:1.02rem;font-weight:900;margin-bottom:10px;padding-bottom:7px;border-bottom:1px dashed var(--line)}
+.sessions{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.session{position:relative;border:1px solid var(--line);border-radius:16px;padding:15px;background:#fff;cursor:pointer;transition:.16s}
+.session:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(55,38,27,.07)}.session.selected{border-color:var(--a);background:#fff9f5;box-shadow:0 0 0 3px rgba(189,99,59,.08)}.session.full{opacity:.55;cursor:not-allowed;background:#f4f1ef}
+.session input{position:absolute;opacity:0;pointer-events:none}.top{display:flex;justify-content:space-between;gap:12px;align-items:start}.time{font-size:.9rem;font-weight:900;color:var(--ad)}.seat{font-size:.78rem;font-weight:900;background:var(--soft);color:var(--ad);border-radius:999px;padding:5px 9px;white-space:nowrap}
+.company{font-size:1.08rem;font-weight:900;margin-top:8px}.meta{font-size:.86rem;color:var(--muted);margin-top:3px}.choose{margin-top:12px;font-size:.86rem;font-weight:900;color:var(--ad)}.selected .choose:before{content:"✓ "}.full .choose{color:#776f6a}
+.summary{margin-top:18px;padding:14px;border-radius:13px;background:#f8f3ef;border:1px solid var(--line)}.summary b{color:var(--ad)}
 button{width:100%;min-height:50px;margin-top:16px;border:0;border-radius:12px;background:linear-gradient(135deg,var(--a),var(--ad));color:#fff;font:inherit;font-weight:900;cursor:pointer}
 button:disabled{opacity:.55}.status{display:none;margin-top:14px;padding:13px;border-radius:11px;white-space:pre-line}.ok{display:block;background:#e7f3ec;color:var(--ok)}.err{display:block;background:#fae9e9;color:var(--bad)}
 .note{padding:12px 14px;border-radius:12px;background:#fff7ef;margin-top:15px;color:#65574e;font-size:.9rem}
-@media(max-width:600px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.session{grid-template-columns:22px 1fr}.seat{grid-column:2;justify-self:start}}
+@media(max-width:720px){.sessions,.grid{grid-template-columns:1fr}.full{grid-column:auto}.hero{padding:26px 20px}.card{padding:19px 15px}}
 </style>
 </head>
 <body><main>
-<section class="hero"><div style="font-weight:900;color:#914526">NTUT CAREER · TEST</div><h1>企業說明會學生報名</h1><p>測試版：每位學生只會建立一組個人 QR Code；同一張 QR 可用於所有已報名場次。</p></section>
+<section class="hero"><div class="tag">NTUT CAREER · 企業說明會</div><h1>學生場次報名</h1><p>選擇想參加的企業說明會。報名成功後，每位學生只會使用一張個人 QR Code，所有已報名場次皆使用同一張。</p></section>
 
 <section class="card">
-<h2>學生資料</h2><p class="desc">測試時可以先用假資料與自己的 Email。</p>
+<h2>學生資料</h2><p class="desc">請填寫正確資料，報名確認與個人 QR Code 將寄送至 Email。</p>
 <div class="grid">
-<div><label>學號</label><input id="studentId" placeholder="TEST001"></div>
-<div><label>姓名</label><input id="name" placeholder="測試學生"></div>
-<div><label>系所</label><input id="department" placeholder="工管系"></div>
-<div><label>年級</label><select id="grade"><option value="">請選擇</option><option>大一</option><option>大二</option><option>大三</option><option>大四</option><option>碩一</option><option>碩二</option></select></div>
-<div class="full"><label>Email</label><input id="email" type="email" placeholder="請填可收信的測試信箱"></div>
+<div><label class="field">學號</label><input id="studentId"></div>
+<div><label class="field">姓名</label><input id="name"></div>
+<div><label class="field">系所</label><input id="department"></div>
+<div><label class="field">年級</label><select id="grade"><option value="">請選擇</option><option>大一</option><option>大二</option><option>大三</option><option>大四</option><option>碩一</option><option>碩二</option><option>其他</option></select></div>
+<div class="full"><label class="field">Email</label><input id="email" type="email"></div>
 </div>
 </section>
 
 <section class="card">
-<h2>選擇測試場次</h2><p class="desc">先用兩場測試。可以兩場都勾選，再用同一張 QR 分別簽到。</p>
-<div id="sessions" class="sessions">載入中…</div>
-<div class="note">報名成功後，請到 Email 開啟個人 QR Code，再使用另一支手機或電腦開啟工作人員 scanner.html 測試。</div>
-<button id="submit">送出測試報名</button><div id="status" class="status"></div>
+<h2>選擇企業場次</h2><p class="desc">場次資料由主辦單位即時更新。已額滿或未開放場次無法報名。</p>
+<div id="sessions">場次載入中…</div>
+<div id="summary" class="summary">已選擇 <b>0</b> 場</div>
+<div class="note">同一學號不可重複報名同一場次；若之後再新增其他場次，仍會沿用原本的個人 QR Code。</div>
+<button id="submit">確認報名</button><div id="status" class="status"></div>
 </section>
 </main>
 <script>
 const GAS_URL="https://script.google.com/macros/s/AKfycbyrk9C7Cul4fUIKwFhZd8fJ5xsp-JdmebLICIaAPuNBqNoxmjYLS0lfdhxYoRU8p6zqRw/exec";
-let sessions=[];
+let sessions=[],selected=new Set();
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+function renderSummary(){$("summary").innerHTML=`已選擇 <b>${selected.size}</b> 場`}
+function render(){
+ const groups={};sessions.forEach(s=>{const k=`${s.date}__${s.weekday||""}`;(groups[k]??=[]).push(s)});
+ $("sessions").innerHTML=Object.entries(groups).map(([k,items])=>{
+  const [d,w]=k.split("__");
+  return `<div class="date-block"><div class="date-head">${esc(d)}${w?`（${esc(w)}）`:""}</div><div class="sessions">${
+   items.map(s=>{
+    const full=Number(s.remaining)<=0,on=selected.has(s.id);
+    return `<label class="session ${on?"selected":""} ${full?"full":""}">
+      <input type="checkbox" value="${esc(s.id)}" ${on?"checked":""} ${full?"disabled":""}>
+      <div class="top"><div class="time">${esc(s.time)}</div><div class="seat">${full?"已額滿":`剩 ${esc(s.remaining)} / ${esc(s.capacity)}`}</div></div>
+      <div class="company">${esc(s.company)}</div>
+      <div class="meta">${esc(s.venue||"")}</div>
+      <div class="choose">${full?"此場次已額滿":on?"已選擇":"＋ 我要報名"}</div>
+    </label>`
+   }).join("")
+  }</div></div>`
+ }).join("")||'<div class="status err" style="display:block">目前沒有開放報名的場次。</div>';
+ document.querySelectorAll('.session input').forEach(el=>el.onchange=()=>{el.checked?selected.add(el.value):selected.delete(el.value);render();renderSummary()});
+}
 async function load(){
- if(GAS_URL.includes("PASTE_YOUR")){$("sessions").innerHTML='<div class="status err" style="display:block">請先設定 GAS_URL。</div>';return}
+ if(GAS_URL.includes("PASTE_YOUR")){$("sessions").innerHTML='<div class="status err" style="display:block">尚未設定 GAS_URL。</div>';return}
  try{
   const r=await fetch(`${GAS_URL}?action=sessions&t=${Date.now()}`),d=await r.json();
-  if(!d.ok)throw new Error(d.message);sessions=d.sessions||[];
-  $("sessions").innerHTML=sessions.map(s=>`<label class="session"><input type="checkbox" value="${esc(s.id)}" ${s.remaining<=0?"disabled":""}><div><div class="company">${esc(s.company)}</div><div class="meta">${esc(s.date)}（${esc(s.weekday)}） ${esc(s.time)} · ${esc(s.venue)}</div></div><div class="seat">${s.remaining<=0?"額滿":`剩 ${s.remaining}`}</div></label>`).join("");
+  if(!d.ok)throw new Error(d.message);sessions=d.sessions||[];render();renderSummary();
  }catch(e){$("sessions").innerHTML=`<div class="status err" style="display:block">${esc(e.message)}</div>`}
 }
 function show(c,m){$("status").className=`status ${c}`;$("status").textContent=m}
 $("submit").onclick=async()=>{
- const ids=[...document.querySelectorAll('#sessions input:checked')].map(x=>x.value);
- const data={studentId:$("studentId").value.trim(),name:$("name").value.trim(),department:$("department").value.trim(),grade:$("grade").value,email:$("email").value.trim(),sessionIds:ids};
+ const data={studentId:$("studentId").value.trim(),name:$("name").value.trim(),department:$("department").value.trim(),grade:$("grade").value,email:$("email").value.trim(),sessionIds:[...selected]};
  if(!data.studentId||!data.name||!data.department||!data.grade||!data.email){show("err","請把學生資料填完整。");return}
- if(!ids.length){show("err","請至少選擇一個場次。");return}
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)){show("err","Email 格式不正確。");return}
+ if(!data.sessionIds.length){show("err","請至少選擇一個場次。");return}
  const b=$("submit");b.disabled=true;b.textContent="送出中…";
  try{
   const r=await fetch(GAS_URL,{method:"POST",body:JSON.stringify({action:"register",...data})}),d=await r.json();
   if(!d.ok)throw new Error(d.message||"報名失敗");
-  show("ok",`測試報名成功！\n個人 QR Code 已寄至 ${data.email}\n這張 QR 可用於你報名的所有場次。`);
-  await load();
- }catch(e){show("err",e.message)}finally{b.disabled=false;b.textContent="送出測試報名"}
+  show("ok",`報名成功！\n已完成 ${d.registeredCount} 個場次報名。\n個人 QR Code 已寄至 ${data.email}`);
+  selected.clear();await load();
+ }catch(e){show("err",e.message)}finally{b.disabled=false;b.textContent="確認報名"}
 };
 load();
 </script></body></html>
