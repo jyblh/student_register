@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>企業說明會｜手機簽到測試</title>
+<title>企業說明會｜工作人員手機簽到</title>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <style>
 :root{--a:#a9522d;--ink:#302925;--muted:#756a63;--line:#e3d7cf;--ok:#245f44;--warn:#7b5618;--bad:#873535}
@@ -17,83 +17,28 @@ button{width:100%;min-height:49px;border:0;border-radius:11px;background:var(--a
 </style>
 </head>
 <body><main><div class="card">
-<h1>手機 QR 簽到</h1><p class="sub">測試版：先選目前場次，再用手機鏡頭掃學生的同一張個人 QR。</p>
-
-<label>工作人員密碼</label><input id="key" type="password" placeholder="輸入 GAS 設定的 SCANNER_KEY">
+<h1>工作人員手機簽到</h1><p class="sub">先選目前企業場次，再使用手機鏡頭掃學生個人 QR Code。</p>
+<label>工作人員密碼</label><input id="key" type="password">
 <label>目前簽到場次</label><select id="session"><option value="">場次載入中…</option></select>
-
-<div class="tabs">
-<button id="start">開啟相機掃描</button>
-<button id="stop" class="secondary">停止相機</button>
-</div>
-
-<div id="reader"></div>
-<div id="result" class="result"></div>
-
-<div class="manual">
-<label>QR 掃不到？用學號手動簽到</label>
-<input id="studentId" placeholder="輸入學生學號">
-<button id="manualBtn" class="ghost">查詢並手動簽到</button>
-</div>
-<div class="hint">iPhone 請使用 Safari、Android 建議使用 Chrome。第一次開啟相機時請選擇「允許」。GitHub Pages 必須使用 HTTPS。</div>
+<div class="tabs"><button id="start">開啟相機掃描</button><button id="stop" class="secondary">停止相機</button></div>
+<div id="reader"></div><div id="result" class="result"></div>
+<div class="manual"><label>QR 掃不到？使用學號手動簽到</label><input id="studentId"><button id="manualBtn" class="ghost">手動簽到</button></div>
+<div class="hint">iPhone 建議 Safari；Android 建議 Chrome。工作人員切換企業場次後，請再次確認上方「目前簽到場次」。</div>
 </div></main>
-
 <script>
 const GAS_URL="https://script.google.com/macros/s/AKfycbyrk9C7Cul4fUIKwFhZd8fJ5xsp-JdmebLICIaAPuNBqNoxmjYLS0lfdhxYoRU8p6zqRw/exec";
-const $=id=>document.getElementById(id);
-let scanner=null,busy=false,lastToken="",lastAt=0;
+const $=id=>document.getElementById(id);let scanner=null,busy=false,lastToken="",lastAt=0;
 const esc=s=>String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
-function show(c,d){
- $("result").className=`result ${c}`;
- if(typeof d==="string"){$("result").textContent=d;return}
- $("result").innerHTML=`<div class="big">${esc(d.title)}</div><div class="meta">${esc(d.name||"")} ${d.studentId?"｜"+esc(d.studentId):""}<br>${esc(d.company||"")}<br>${esc(d.date||"")} ${esc(d.time||"")}${d.checkinTime?"<br>簽到："+esc(d.checkinTime):""}</div>`;
-}
+function show(c,d){$("result").className=`result ${c}`;if(typeof d==="string"){$("result").textContent=d;return}$("result").innerHTML=`<div class="big">${esc(d.title)}</div><div class="meta">${esc(d.name||"")} ${d.studentId?"｜"+esc(d.studentId):""}<br>${esc(d.company||"")}<br>${esc(d.date||"")} ${esc(d.time||"")}${d.checkinTime?"<br>簽到："+esc(d.checkinTime):""}</div>`}
 async function loadSessions(){
- if(GAS_URL.includes("PASTE_YOUR")){$("session").innerHTML='<option>請先設定 GAS_URL</option>';return}
- try{
-  const r=await fetch(`${GAS_URL}?action=sessions&t=${Date.now()}`),d=await r.json();if(!d.ok)throw new Error(d.message);
-  $("session").innerHTML='<option value="">請選擇場次</option>'+d.sessions.map(s=>`<option value="${esc(s.id)}">${esc(s.date)} ${esc(s.time)}｜${esc(s.company)}</option>`).join("");
+ try{const r=await fetch(`${GAS_URL}?action=sessions&t=${Date.now()}`),d=await r.json();if(!d.ok)throw new Error(d.message);
+ $("session").innerHTML='<option value="">請選擇場次</option>'+d.sessions.map(s=>`<option value="${esc(s.id)}">${esc(s.date)} ${esc(s.time)}｜${esc(s.company)}</option>`).join("");
  }catch(e){show("err",e.message)}
 }
-async function sendCheckin(payload){
- if(busy)return;busy=true;
- try{
-  const r=await fetch(GAS_URL,{method:"POST",body:JSON.stringify(payload)}),d=await r.json();
-  if(!d.ok)throw new Error(d.message||"簽到失敗");
-  show(d.duplicate?"warn":"ok",{title:d.duplicate?"已簽到":"簽到成功",...d});
-  if(navigator.vibrate)navigator.vibrate(d.duplicate?[100,80,100]:120);
- }catch(e){show("err",e.message||"簽到失敗");if(navigator.vibrate)navigator.vibrate([150,80,150])}
- finally{setTimeout(()=>busy=false,700)}
-}
-function base(){
- const scannerKey=$("key").value.trim(),sessionId=$("session").value;
- if(!scannerKey){show("err","請先輸入工作人員密碼。");return null}
- if(!sessionId){show("err","請先選擇目前簽到場次。");return null}
- return {scannerKey,sessionId};
-}
-$("start").onclick=async()=>{
- const b=base();if(!b)return;
- try{
-  if(scanner){try{await scanner.stop()}catch(_){}}
-  scanner=new Html5Qrcode("reader");
-  await scanner.start(
-   {facingMode:"environment"},
-   {fps:10,qrbox:{width:240,height:240},aspectRatio:1},
-   decoded=>{
-    const now=Date.now();
-    if(decoded===lastToken && now-lastAt<2500)return;
-    lastToken=decoded;lastAt=now;
-    sendCheckin({action:"checkin",...b,token:decoded});
-   },
-   ()=>{}
-  );
- }catch(e){show("err","無法開啟相機："+e)}
-};
-$("stop").onclick=async()=>{if(scanner){try{await scanner.stop();await scanner.clear()}catch(_){}scanner=null}};
-$("manualBtn").onclick=()=>{
- const b=base();if(!b)return;
- const studentId=$("studentId").value.trim();if(!studentId){show("err","請輸入學號。");return}
- sendCheckin({action:"manualCheckin",...b,studentId});
-};
+function base(){const scannerKey=$("key").value.trim(),sessionId=$("session").value;if(!scannerKey){show("err","請輸入工作人員密碼。");return null}if(!sessionId){show("err","請先選擇目前場次。");return null}return{scannerKey,sessionId}}
+async function send(payload){if(busy)return;busy=true;try{const r=await fetch(GAS_URL,{method:"POST",body:JSON.stringify(payload)}),d=await r.json();if(!d.ok)throw new Error(d.message||"簽到失敗");show(d.duplicate?"warn":"ok",{title:d.duplicate?"已簽到":"簽到成功",...d});if(navigator.vibrate)navigator.vibrate(120)}catch(e){show("err",e.message);if(navigator.vibrate)navigator.vibrate([150,80,150])}finally{setTimeout(()=>busy=false,700)}}
+$("start").onclick=async()=>{const b=base();if(!b)return;try{if(scanner){try{await scanner.stop()}catch(_){}}scanner=new Html5Qrcode("reader");await scanner.start({facingMode:"environment"},{fps:10,qrbox:{width:240,height:240},aspectRatio:1},decoded=>{const now=Date.now();if(decoded===lastToken&&now-lastAt<2500)return;lastToken=decoded;lastAt=now;send({action:"checkin",...b,token:decoded})},()=>{})}catch(e){show("err","無法開啟相機："+e)}}
+$("stop").onclick=async()=>{if(scanner){try{await scanner.stop();await scanner.clear()}catch(_){}scanner=null}}
+$("manualBtn").onclick=()=>{const b=base();if(!b)return;const studentId=$("studentId").value.trim();if(!studentId){show("err","請輸入學號。");return}send({action:"manualCheckin",...b,studentId})}
 loadSessions();
 </script></body></html>
