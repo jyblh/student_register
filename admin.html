@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>企業說明會｜管理 Dashboard</title>
+<style>
+:root{--a:#a9522d;--ad:#824022;--bg:#f4f1ed;--card:#fff;--ink:#302925;--muted:#766c65;--line:#e3d7cf;--ok:#245f44;--warn:#875d17;--bad:#8a3636;--soft:#f5e7df}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#f8f5f2,#f1ece8);font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;color:var(--ink);line-height:1.55}
+main{width:min(1180px,calc(100% - 22px));margin:auto;padding:20px 0 60px}
+.header{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;margin-bottom:16px}h1{margin:0;font-size:clamp(1.7rem,4vw,2.5rem)}.sub{color:var(--muted);font-size:.9rem;margin-top:5px}
+.auth,.panel{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 9px 25px rgba(55,38,27,.07)}
+.auth{padding:16px;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-bottom:16px}label{display:block;font-weight:900;font-size:.88rem;margin-bottom:5px}input,select{width:100%;min-height:44px;border:1px solid #d6cac1;border-radius:10px;padding:9px 10px;font:inherit;background:#fff}
+button{min-height:44px;border:0;border-radius:10px;background:var(--a);color:#fff;font:inherit;font-weight:900;padding:0 16px;cursor:pointer}button.secondary{background:#514a46}button.ghost{background:#eee8e4;color:#514944}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}.metric{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px;box-shadow:0 8px 22px rgba(55,38,27,.06)}.metric .n{font-size:1.65rem;font-weight:900;color:var(--ad)}.metric .l{color:var(--muted);font-size:.84rem;margin-top:2px}
+.panel{padding:17px;margin-bottom:16px}.panel-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.panel h2{margin:0;font-size:1.15rem}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}table{width:100%;border-collapse:collapse;min-width:920px}th,td{padding:10px 11px;border-bottom:1px solid #eee5df;text-align:left;font-size:.86rem;white-space:nowrap}th{background:#f8f3ef;position:sticky;top:0;z-index:1}tr:last-child td{border-bottom:0}tbody tr:hover{background:#fffaf7}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:.76rem;font-weight:900}.on{background:#e6f2eb;color:var(--ok)}.off{background:#eee8e4;color:#716861}.yes{background:#e5f2ea;color:var(--ok)}.no{background:#fff0da;color:var(--warn)}
+.linkbtn{border:0;background:none;color:var(--a);padding:0;font-weight:900;min-height:0;text-decoration:underline;cursor:pointer}
+.status{display:none;padding:12px;border-radius:10px;margin-top:10px}.err{display:block;background:#fae8e8;color:var(--bad)}.okbox{display:block;background:#e7f3ec;color:var(--ok)}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.toolbar select{width:auto;min-width:130px}.toolbar button{min-height:40px}
+#detailPanel{display:none}.empty{color:var(--muted);padding:18px;text-align:center}
+@media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}.auth{grid-template-columns:1fr}.header{align-items:start;flex-direction:column}}
+@media(max-width:520px){.cards{grid-template-columns:1fr 1fr}.metric{padding:14px}.metric .n{font-size:1.35rem}}
+</style>
+</head>
+<body><main>
+<div class="header"><div><h1>企業說明會管理 Dashboard</h1><div class="sub">查看報名、簽到與各場出席狀況。資料直接讀取目前 Google Sheet。</div></div><div class="sub" id="updated"></div></div>
+
+<section class="auth">
+<div><label>管理密碼</label><input id="adminKey" type="password" placeholder="請輸入管理密碼"></div>
+<button id="loadBtn">載入 Dashboard</button>
+</section>
+<div id="status" class="status"></div>
+
+<section id="dashboard" style="display:none">
+<div class="cards">
+<div class="metric"><div class="n" id="mReg">0</div><div class="l">總報名人次</div></div>
+<div class="metric"><div class="n" id="mStu">0</div><div class="l">報名學生數</div></div>
+<div class="metric"><div class="n" id="mCheck">0</div><div class="l">已簽到人次</div></div>
+<div class="metric"><div class="n" id="mAbsent">0</div><div class="l">未簽到人次</div></div>
+<div class="metric"><div class="n" id="mRate">0%</div><div class="l">整體出席率</div></div>
+</div>
+
+<section class="panel">
+<div class="panel-head"><h2>各企業場次</h2><div class="toolbar"><button class="secondary" id="refreshBtn">重新整理</button></div></div>
+<div class="table-wrap"><table>
+<thead><tr><th>日期</th><th>時間</th><th>企業</th><th>名額</th><th>已報名</th><th>剩餘</th><th>已簽到</th><th>未簽到</th><th>出席率</th><th>狀態</th><th>名單</th></tr></thead>
+<tbody id="sessionBody"></tbody>
+</table></div>
+</section>
+
+<section id="detailPanel" class="panel">
+<div class="panel-head"><div><h2 id="detailTitle">場次名單</h2><div class="sub" id="detailMeta"></div></div>
+<div class="toolbar"><select id="filter"><option value="all">全部</option><option value="checked">已簽到</option><option value="pending">未簽到</option></select><button class="ghost" id="closeDetail">關閉</button></div></div>
+<div class="table-wrap"><table>
+<thead><tr><th>學號</th><th>姓名</th><th>系所</th><th>年級</th><th>Email</th><th>報名時間</th><th>簽到狀態</th><th>簽到時間</th></tr></thead>
+<tbody id="detailBody"></tbody>
+</table></div>
+</section>
+</section>
+
+<script>
+const GAS_URL="https://script.google.com/macros/s/AKfycbyrk9C7Cul4fUIKwFhZd8fJ5xsp-JdmebLICIaAPuNBqNoxmjYLS0lfdhxYoRU8p6zqRw/exec";
+const $=id=>document.getElementById(id);
+let dashboardData=null,detailStudents=[],currentSession=null;
+const esc=s=>String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+
+function setStatus(type,msg){$("status").className=`status ${type}`;$("status").textContent=msg}
+async function post(payload){
+ const r=await fetch(GAS_URL,{method:"POST",body:JSON.stringify(payload)});
+ const d=await r.json();
+ if(!d.ok)throw new Error(d.message||"系統錯誤");
+ return d;
+}
+async function loadDashboard(){
+ const adminKey=$("adminKey").value.trim();
+ if(!adminKey){setStatus("err","請輸入管理密碼。");return}
+ const b=$("loadBtn");b.disabled=true;b.textContent="載入中…";
+ try{
+  const d=await post({action:"adminDashboard",adminKey});
+  dashboardData=d;renderDashboard(d);$("dashboard").style.display="block";$("status").className="status";
+ }catch(e){setStatus("err",e.message)}finally{b.disabled=false;b.textContent="載入 Dashboard"}
+}
+function renderDashboard(d){
+ $("mReg").textContent=d.summary.totalRegistrations;
+ $("mStu").textContent=d.summary.uniqueStudents;
+ $("mCheck").textContent=d.summary.totalChecked;
+ $("mAbsent").textContent=d.summary.totalAbsent;
+ $("mRate").textContent=d.summary.attendanceRate+"%";
+ $("updated").textContent="最後更新："+d.generatedAt;
+ $("sessionBody").innerHTML=d.sessions.map(s=>`<tr>
+ <td>${esc(s.date)}${s.weekday?`（${esc(s.weekday)}）`:""}</td>
+ <td>${esc(s.time)}</td><td><b>${esc(s.company)}</b></td>
+ <td>${s.capacity}</td><td>${s.registered}</td><td>${s.remaining}</td>
+ <td>${s.checked}</td><td>${s.absent}</td><td>${s.attendanceRate}%</td>
+ <td><span class="badge ${s.active?"on":"off"}">${s.active?"開放":"關閉"}</span></td>
+ <td><button class="linkbtn" onclick='loadDetail(${JSON.stringify(s.id)})'>查看</button></td></tr>`).join("");
+}
+async function loadDetail(sessionId){
+ const adminKey=$("adminKey").value.trim();
+ try{
+  const d=await post({action:"adminSessionDetail",adminKey,sessionId});
+  currentSession=d.session;detailStudents=d.students||[];
+  $("detailTitle").textContent=d.session.company;
+  $("detailMeta").textContent=`${d.session.date} ${d.session.time}｜${d.session.venue||""}｜報名 ${detailStudents.length} 人`;
+  $("filter").value="all";renderDetail();
+  $("detailPanel").style.display="block";
+  $("detailPanel").scrollIntoView({behavior:"smooth",block:"start"});
+ }catch(e){setStatus("err",e.message)}
+}
+function renderDetail(){
+ const f=$("filter").value;
+ const rows=detailStudents.filter(s=>f==="all"||(f==="checked"&&s.checked)||(f==="pending"&&!s.checked));
+ $("detailBody").innerHTML=rows.length?rows.map(s=>`<tr>
+ <td>${esc(s.studentId)}</td><td><b>${esc(s.name)}</b></td><td>${esc(s.department)}</td><td>${esc(s.grade)}</td>
+ <td>${esc(s.email)}</td><td>${esc(s.submittedAt)}</td>
+ <td><span class="badge ${s.checked?"yes":"no"}">${s.checked?"已簽到":"未簽到"}</span></td>
+ <td>${esc(s.checkinTime||"—")}</td></tr>`).join(""):`<tr><td colspan="8" class="empty">此篩選條件目前沒有資料。</td></tr>`;
+}
+$("loadBtn").onclick=loadDashboard;
+$("refreshBtn").onclick=loadDashboard;
+$("filter").onchange=renderDetail;
+$("closeDetail").onclick=()=>{$("detailPanel").style.display="none"};
+$("adminKey").addEventListener("keydown",e=>{if(e.key==="Enter")loadDashboard()});
+</script>
+</body></html>
